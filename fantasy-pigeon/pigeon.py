@@ -37,14 +37,13 @@ mids = []
 max_mids = 5
 fwds = []
 max_fwds = 3
+players = []
+for index,row in players_df.iterrows():
+    name = row['second_name'] + ' ' + str(row['team'])
+    pos = row['element_type']
+    players.append([name,pos])
 
-if new:
-    players = []
-    for index,row in players_df.iterrows():
-        name = row['second_name'] + ' ' + str(row['team'])
-        pos = row['element_type']
-        players.append([name,pos])
-        
+if new:    
     done = False
     while not done:
         player = random.choice(players)
@@ -96,4 +95,61 @@ if new:
             print(random.choice(fwds))
         counter+=1
     
+elif not new:
+    team_path = 'teams/team' + str(gw -1) + '.csv'
+    with open(team_path, newline='') as f:
+        reader = csv.reader(f)
+        old_team = list(reader)
+        transfer_out = random.choice(old_team)
+        old_team.remove(transfer_out)
+        while True:
+            transfer_in = random.choice(players)
+            if transfer_in[1] == transfer_out[1]:
+                old_team.append(transfer_in)
+                break
+        for player in old_team:
+            if player[1] == 1:
+                gks.append(player[0])
+            elif player[1] == 2:
+                defs.append(player[0])
+            elif player[1] == 3:
+                mids.append(player[0])
+            elif player[1] == 4:
+                fwds.append(player[0])
         
+        #Save team to file  
+    with open('teams/team' + str(gw) + '.csv', mode='w') as team_file:
+        writer = csv.writer(team_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        for x in gks:
+            newtuple = (x, 1)
+            writer.writerow(newtuple)
+        for x in defs:
+            newtuple = (x, 2)
+            writer.writerow(newtuple)
+        for x in mids:
+            newtuple = (x, 3)
+            writer.writerow(newtuple)
+        for x in fwds:
+            newtuple = (x, 4)
+            writer.writerow(newtuple)
+    print('Team: ')
+    for x in gks:
+        print(x)
+    for x in defs:
+        print(x)
+    for x in mids:
+        print(x)
+    for x in fwds:
+        print(x)
+    print('Bench the following: ')
+    print(random.choice(gks))
+    counter = 0
+    while counter<3:
+        p = random.randint(2, 4)
+        if p == 2:
+            print(random.choice(defs))
+        elif p == 3:
+            print(random.choice(mids))
+        elif p == 4:
+            print(random.choice(fwds))
+        counter+=1
